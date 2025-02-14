@@ -14,6 +14,7 @@ int main(){
 
     int b = 12312;
 
-    
+    char c = "A";
+
     return 0;
 }
