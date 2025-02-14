@@ -9,7 +9,7 @@ int main(){
     
     for (int i = 0; i > a; i++)
     {
-        printf("Vai se fuder GuiNaka");
+        printf("nao sei");
     }
     
     return 0;
