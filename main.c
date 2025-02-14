@@ -6,7 +6,7 @@ int main(){
     int a;
 
     a = -10;
-    
+    printf("guinaka\n");
     for (int i = 0; i > a; i++)
     {
         printf("nao sei");
