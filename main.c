@@ -7,5 +7,10 @@ int main(){
 
     a = -10;
     
+    for (int i = 0; i > a; i++)
+    {
+        printf("Nickao gay");
+    }
+    
     return 0;
 }
