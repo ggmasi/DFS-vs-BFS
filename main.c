@@ -11,6 +11,9 @@ int main(){
     {
         printf("nao sei");
     }
+
+    int b = 12312;
+
     
     return 0;
 }
