@@ -9,7 +9,7 @@ int main(){
     
     for (int i = 0; i > a; i++)
     {
-        printf("Nickao e ggmasi sao gay");
+        printf("Vai se fuder GuiNaka");
     }
     
     return 0;
