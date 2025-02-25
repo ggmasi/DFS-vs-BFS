@@ -78,3 +78,64 @@ int DFS(int x, int y, int labirinto[TAM][TAM], int visitado[TAM][TAM], int desti
     pop(pilha);
     return 0;
 }
+
+
+
+
+
+int BFS(int x, int y, int labirinto[5][5], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila){
+
+    
+
+    
+
+    int pos = (x * TAM) + y;
+
+    
+
+    Push(fila, pos);
+
+    
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+
+
+    while(!Empty(fila)){
+
+        pos = Pop(fila);
+        Posicao atual;
+
+        atual.x = pos / TAM;
+        atual.y = pos % TAM;
+
+        if( atual.x == destino[0] && atual.y == destino[1]){
+            for(int i = 0; i < TAM; i++){
+                for(int j = 0; j < TAM; j++){
+                    printf("%d ", visitadoBFS[i][j]);
+                }
+                printf("\n");
+            }
+            return 1;
+        }
+
+        for(int i = 0; i < 4; i++){
+            int nx = atual.x + dx[i];
+            int ny = atual.x + dy[i];
+
+            int pos_fake;
+            if(nx >= 0 && ny >= 0 && nx < TAM && ny < TAM && labirinto[nx][ny] == 0 && !visitadoBFS[nx][ny]){
+                pos_fake = (nx * TAM) + ny;
+                Push(fila, pos_fake);
+                visitadoBFS[nx][ny] = 1;
+            }
+              
+
+        }
+
+
+    }
+
+    return -1;
+
+
+}
