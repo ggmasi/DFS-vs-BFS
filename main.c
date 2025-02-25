@@ -1,20 +1,17 @@
 #include <stdio.h>
 
+
 int main(){
-    printf("HELLO WORLD!");
+   int labirinto[5][5] = 
+   {{0, 1, 0, 0, 0},
+    {0, 1, 0, 0, 0},
+    {0, 0, 0, 1, 0},
+    {1, 1, 1, 1 ,0},
+    {0, 0, 0, 0, 0}};
 
-    int a;
 
-    a = -10;
-    printf("guinaka\n");
-    for (int i = 0; i > a; i++)
-    {
-        printf("nao sei");
-    }
+    
 
-    int b = 12312;
 
-    char c = "A";
-
-    return 0;
+    
 }
