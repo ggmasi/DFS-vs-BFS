@@ -2,7 +2,7 @@
 #include "pilha.h"
 
 void initialize( stack *s, int limit ){
-    s->data = (char*)malloc(limit *sizeof(char));
+    s->data = (int*)malloc(limit *sizeof(int));
     s->top = -1;
     s->limit = limit;
 }
@@ -18,12 +18,12 @@ void push( stack *s, int value ){
     s->top++;
     s->data[s->top] = value;
 }
-char pop( stack *s ){
+int pop( stack *s ){
     if(isEmpty(s)) return '\0';
     s->top--;
     return s->data[s->top+1];
 }
-char peek( stack *s ){
+int peek( stack *s ){
     if(isEmpty(s)) return '\0';
     return s->data[s->top];
 }
