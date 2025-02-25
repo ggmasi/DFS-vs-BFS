@@ -15,8 +15,7 @@ int isFull( stack *s ){
 }
 void push( stack *s, int value ){
     if(isFull(s)) return;
-    s->top++;
-    s->data[s->top] = value;
+    s->data[++s->top] = value;
 }
 int pop( stack *s ){
     if(isEmpty(s)) return -1;
