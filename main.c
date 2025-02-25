@@ -47,7 +47,7 @@ int main(){
 
 
 }
-
+//CS2 OU R6?
 int DFS(int x, int y, int labirinto[TAM][TAM], int visitado[TAM][TAM], int destino[2], stack *pilha) {
     if (labirinto[x][y] == 1) return 0;
 
