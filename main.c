@@ -13,6 +13,7 @@ typedef struct Posicao{
 
 
 int DFS(int x, int y, int labirinto[TAM][TAM], int visitado[TAM][TAM], int destino[2], stack *pilha);
+int BFS(int x, int y, int labirinto[5][5], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila);
 
 int main(){
    int labirinto[TAM][TAM] = 
@@ -23,18 +24,46 @@ int main(){
     {0, 0, 0, 0, 0}};
 
     int visitadoDFS[TAM][TAM] = { 0 };
-    int solucaoDFS[TAM][TAM] = { 0 };
+    
+    int visitadoBFS[TAM][TAM] = { 0 };
 
     int destino[2] = {TAM-1, TAM-1};
     
     stack pilha;
     initialize(&pilha, TAM*TAM);
 
+    Fila *fila = CriarFila(TAM*TAM);
+    
+    if(!DFS(0, 1, labirinto, visitadoDFS, destino, &pilha)){
+        printf("Caminho nao encontrado\n");
+    }
+   
+    if(!BFS(0, 1, labirinto, visitadoBFS, destino, fila)){
+        printf("Caminho nao encontrado\n");
+    }
+    
 
-    if(DFS(0, 0, labirinto, visitadoDFS, destino, &pilha)){
+
+}
+
+int DFS(int x, int y, int labirinto[TAM][TAM], int visitado[TAM][TAM], int destino[2], stack *pilha){
+    if(x < 0 || x >= TAM || y < 0 || y >= TAM){
+        return 0;
+    } 
+    if(labirinto[x][y] == 1){
+        return 0;
+    }
+
+
+    visitado[x][y] = 1;
+    int pos = (x*TAM) + y;
+    push(pilha, pos);
+    if(x == destino[0] && y == destino[1]){
+        printf("\nDFS\n");
         int temp;
-        while(!isEmpty(&pilha)){
-            temp = pop(&pilha);
+        int solucaoDFS[TAM][TAM] = { 0 };
+        while(!isEmpty(pilha)){
+            temp = pop(pilha);
             int tempX = temp/TAM;
             int tempY = temp%TAM;
             solucaoDFS[tempX][tempY] = 1;
@@ -45,24 +74,6 @@ int main(){
             }
             printf("\n");
         }
-        
-        
-    }else{printf("Nao encontrado");}
-    
-
-
-
-}
-
-int DFS(int x, int y, int labirinto[TAM][TAM], int visitado[TAM][TAM], int destino[2], stack *pilha){
-    if(x < 0 || x >= TAM || y < 0 || y >= TAM) return 0;
-    if(labirinto[x][y] == 1 || visitado[x][y] == 1) return 0;
-
-
-    visitado[x][y] = 1;
-    int pos = (x*TAM) + y;
-    push(pilha, pos);
-    if(x == destino[0] && y == destino[1]){
         return 1;
     }
 
@@ -75,6 +86,7 @@ int DFS(int x, int y, int labirinto[TAM][TAM], int visitado[TAM][TAM], int desti
             return 1;
         }
     }
+    
     pop(pilha);
     return 0;
 }
@@ -85,7 +97,9 @@ int DFS(int x, int y, int labirinto[TAM][TAM], int visitado[TAM][TAM], int desti
 
 int BFS(int x, int y, int labirinto[5][5], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila){
 
-    
+    if(labirinto[x][y] == 1){
+        return 0;
+    }
 
     
 
@@ -101,7 +115,7 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoBFS[TAM][TAM], int destin
 
 
     while(!Empty(fila)){
-
+        
         pos = Pop(fila);
         Posicao atual;
 
@@ -109,6 +123,7 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoBFS[TAM][TAM], int destin
         atual.y = pos % TAM;
 
         if( atual.x == destino[0] && atual.y == destino[1]){
+            printf("\nBFS\n");
             for(int i = 0; i < TAM; i++){
                 for(int j = 0; j < TAM; j++){
                     printf("%d ", visitadoBFS[i][j]);
@@ -120,7 +135,7 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoBFS[TAM][TAM], int destin
 
         for(int i = 0; i < 4; i++){
             int nx = atual.x + dx[i];
-            int ny = atual.x + dy[i];
+            int ny = atual.y + dy[i];
 
             int pos_fake;
             if(nx >= 0 && ny >= 0 && nx < TAM && ny < TAM && labirinto[nx][ny] == 0 && !visitadoBFS[nx][ny]){
@@ -135,7 +150,8 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoBFS[TAM][TAM], int destin
 
     }
 
-    return -1;
+    
+    return 0;
 
 
 }
