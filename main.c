@@ -29,14 +29,6 @@ int main(){
     stack pilha;
     initialize(&pilha, TAM*TAM);
 
-    Posicao *inicio = malloc(sizeof(Posicao));
-    inicio->x = 0;
-    inicio->y = 0;
-    inicio->pai = NULL;
-    int inicioPos = 0;
-
-   
-    
 
     if(DFS(0, 0, labirinto, visitadoDFS, destino, &pilha)){
         int temp;
