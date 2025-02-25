@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "pilha.h"
+#include"fila.h"
 
+#define TAM 5
 
 typedef struct Posicao{
     int x;
@@ -12,15 +14,17 @@ typedef struct Posicao{
 int DFS(int x, int y, int labirinto[5][5], int visitado[5][5], int solucao[5][5], int destino[2]);
 
 int main(){
-   int labirinto[5][5] = 
+   int labirinto[TAM][TAM] = 
    {{0, 1, 0, 0, 0},
     {0, 1, 0, 0, 0},
     {0, 0, 0, 1, 0},
     {1, 1, 1, 1 ,0},
     {0, 0, 0, 0, 0}};
 
-    int visitadoDFS[5][5] = { 0 };
-    int solucaoDFS[5][5] = { 0 };
+    int visitadoDFS[TAM][TAM] = { 0 };
+    int solucaoDFS[TAM][TAM] = { 0 };
+    int visitadoBFS[TAM][TAM] = { 0 };
+    int solucaoBFS[TAM][TAM] = { 0 };
 
     int destino[2] = {4, 4};
     
@@ -66,6 +70,27 @@ int DFS(int x, int y, int labirinto[5][5], int visitado[5][5], int solucao[5][5]
     if(DFS(x + 1, y, labirinto, visitado, solucao, destino)) return 1;
     if(DFS(x, y - 1, labirinto, visitado, solucao, destino)) return 1;
     if(DFS(x - 1, y, labirinto, visitado, solucao, destino)) return 1;
+
+
+}
+
+
+
+
+
+
+int BFS(int x, int y, int labirinto[5][5]){
+
+    Fila *fila;
+
+    fila = CriarFila(TAM * TAM);
+
+    int pos = (x * TAM) + y;
+
+    Push(fila, pos);
+
+
+
 
 
 }
