@@ -31,12 +31,12 @@ int Push(Fila *fila, int numero){
     return 1;
 }
 
-int Pop(Fila *fila, int *numero){
+int Pop(Fila *fila){
 
     if(Empty(fila))
-        return 0;
+        return '\0';
     
-    *numero = fila->array[fila->inicio];
+    int numero = fila->array[fila->inicio];
     fila->tamanho--;
     if(fila->inicio != fila->fim){
         if(fila->inicio == fila->capacidade - 1)
@@ -44,7 +44,7 @@ int Pop(Fila *fila, int *numero){
         else 
             fila->inicio++;
     }
-    return 1;
+    return numero;
 }
 
 int Empty (Fila *fila){
