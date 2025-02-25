@@ -19,12 +19,12 @@ void push( stack *s, int value ){
     s->data[s->top] = value;
 }
 int pop( stack *s ){
-    if(isEmpty(s)) return '\0';
+    if(isEmpty(s)) return -1;
     s->top--;
     return s->data[s->top+1];
 }
 int peek( stack *s ){
-    if(isEmpty(s)) return '\0';
+    if(isEmpty(s)) return -1;
     return s->data[s->top];
 }
 void destroy( stack *s){
