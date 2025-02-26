@@ -15,6 +15,6 @@ int Push(Fila *fila, int numero);
 int Pop(Fila *fila);
 int Empty (Fila *fila);
 int Full (Fila *fila);
-void LiberarFila(Fila *fila);
+void Destroy(Fila *fila);
 
 #endif

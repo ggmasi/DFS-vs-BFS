@@ -55,7 +55,7 @@ int Full (Fila *fila){
     return fila->tamanho == fila->capacidade;
 }
 
-void LiberarFila(Fila *fila){
+void Destroy(Fila *fila){
     free (fila->array);
     free (fila);
 }
