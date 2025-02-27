@@ -5,13 +5,13 @@ typedef struct {
     int *data;
     int top;
     int limit;
-} stack;
+} Stack;
 
-void initialize( stack *s, int limit );
-int isEmpty( stack *s );
-int isFull( stack *s );
-void push( stack *s, int value );
-int pop( stack *s );
-int peek( stack *s );
-void destroy( stack *s);
+Stack *InitializeStack( int limit );
+int IsStackEmpty( Stack *s );
+int IsStackFull( Stack *s );
+void Push( Stack *s, int value );
+int Pop( Stack *s );
+int Peek( Stack *s );
+void DestroyStack( Stack *s);
 #endif

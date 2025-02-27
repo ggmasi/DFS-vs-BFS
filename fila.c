@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "fila.h"
 
-Fila *CriarFila(int capacidade){
+Fila *InitializeQueue(int capacidade){
 
     Fila *fila = (Fila*)malloc(sizeof(Fila));
     fila->array = (int*)malloc(capacidade*sizeof(int));
@@ -14,12 +14,12 @@ Fila *CriarFila(int capacidade){
     return fila;
 }
 
-int Push(Fila *fila, int numero){
+int Enqueue(Fila *fila, int numero){
 
-    if(Full(fila))
+    if(IsQueueFull(fila))
         return 0;
     
-    if(!(Empty(fila))){
+    if(!(IsQueueEmpty(fila))){
         if(fila->fim == fila->capacidade - 1)
             fila->fim = 0;
         else 
@@ -31,9 +31,9 @@ int Push(Fila *fila, int numero){
     return 1;
 }
 
-int Pop(Fila *fila){
+int Dequeue(Fila *fila){
 
-    if(Empty(fila))
+    if(IsQueueEmpty(fila))
         return '\0';
     
     int numero = fila->array[fila->inicio];
@@ -47,15 +47,15 @@ int Pop(Fila *fila){
     return numero;
 }
 
-int Empty (Fila *fila){
+int IsQueueEmpty(Fila *fila){
     return fila->tamanho == 0;
 }
 
-int Full (Fila *fila){
+int IsQueueFull(Fila *fila){
     return fila->tamanho == fila->capacidade;
 }
 
-void Destroy(Fila *fila){
+void DestroyQueue(Fila *fila){
     free (fila->array);
     free (fila);
 }

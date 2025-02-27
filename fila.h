@@ -10,11 +10,11 @@ typedef struct {
 
 } Fila;
 
-Fila *CriarFila(int capacidade);
-int Push(Fila *fila, int numero);
-int Pop(Fila *fila);
-int Empty (Fila *fila);
-int Full (Fila *fila);
-void Destroy(Fila *fila);
+Fila *InitializeQueue(int capacidade);
+int Enqueue(Fila *fila, int numero);
+int Dequeue(Fila *fila);
+int IsQueueEmpty(Fila *fila);
+int IsQueueFull(Fila *fila);
+void DestroyQueue(Fila *fila);
 
 #endif

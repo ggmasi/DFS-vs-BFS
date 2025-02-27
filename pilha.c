@@ -1,32 +1,33 @@
 #include <stdlib.h>
 #include "pilha.h"
 
-void initialize( stack *s, int limit ){
+Stack *InitializeStack( int limit ){
+    Stack *s = (Stack*)malloc(sizeof(Stack));
     s->data = (int*)malloc(limit *sizeof(int));
     s->top = -1;
     s->limit = limit;
 }
 
-int isEmpty( stack *s ){
+int IsStackEmpty( Stack *s ){
     return s->top == -1;
 }
-int isFull( stack *s ){
+int IsStackFull( Stack *s ){
     return s->top == s->limit-1;
 }
-void push( stack *s, int value ){
-    if(isFull(s)) return;
+void Push( Stack *s, int value ){
+    if(IsStackFull(s)) return;
     s->data[++s->top] = value;
 }
-int pop( stack *s ){
-    if(isEmpty(s)) return -1;
+int Pop( Stack *s ){
+    if(IsStackEmpty(s)) return -1;
     s->top--;
     return s->data[s->top+1];
 }
-int peek( stack *s ){
-    if(isEmpty(s)) return -1;
+int Peek( Stack *s ){
+    if(IsStackEmpty(s)) return -1;
     return s->data[s->top];
 }
-void destroy( stack *s){
+void DestroyStack( Stack *s){
     free(s->data);
     s->data = NULL;
     s->top = -1;

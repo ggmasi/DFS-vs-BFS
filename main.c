@@ -15,7 +15,7 @@ typedef struct Posicao{
 }Posicao;
 
 void DesenharLabirinto(int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], Posicao atual, int destino[2], int desenhaDFS, int desenhaBFS);
-int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], stack *pilha);
+int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Stack *pilha);
 int BFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila);
 
 int main(){
@@ -35,10 +35,10 @@ int main(){
     
     int destino[2] = {TAM-1, TAM-1};
     
-    stack pilha;
-    initialize(&pilha, TAM*TAM);
+    Stack *pilha = InitializeStack(TAM*TAM);
     
-    Fila *fila = CriarFila(TAM*TAM);
+    
+    Fila *fila = InitializeQueue(TAM*TAM);
     
     Posicao atual = {0};
 
@@ -52,52 +52,40 @@ int main(){
     SetTargetFPS(15);
     
     
-    int chamouDFS = 0;
-    int chamouBFS = 0;
-    int chamouDesenho = 0;
+
+
+
     int resultadoDFS = -1;
     while (!WindowShouldClose()){
-            while(resultadoDFS == -1){
+        if(resultadoDFS == -1){
             WaitTime(1);
-            resultadoDFS = DFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, &pilha);
-            if(!resultadoDFS)  printf("Caminho nao encontrado");
-            DesenharLabirinto(labirinto, visitadoDFS, visitadoBFS, (Posicao){0}, destino, 0, 0);
-            
 
-            if(!chamouBFS){
-                if(!BFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, fila)){
-                    printf("Caminho nao encontrado\n");
-                }
-                chamouBFS = 1;
-            }
-            // DesenharLabirinto(labirinto, pixelsDesenhados);
+            resultadoDFS = DFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, pilha);
+            if(!resultadoDFS)  printf("Caminho nao encontrado");
+
+            if(!BFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, fila)) printf("Caminho nao encontrado\n");
+             
         }   
     }
-    // EndDrawing();
     CloseWindow();
 
     
-    destroy(&pilha);
-    Destroy(fila);
+    DestroyStack(pilha);
+    DestroyQueue(fila);
 }
 
-int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], stack *pilha) {
+int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Stack *pilha) {
+    
+    if(labirinto[x][y] == 1) return 0;
 
-    static bool iniciado = false;
-    if(!iniciado){
-        if(labirinto[x][y] == 1){
-            return 0;
-        }
-        int pos = (x*TAM) + y;
-        push(pilha, pos);
-        visitadoDFS[x][y] = 1;
-        iniciado = true;
-    }
+   
+    int pos = (x*TAM) + y;
+    Push(pilha, pos);
+    visitadoDFS[x][y] = 1;
+    
 
-    if(isEmpty(pilha)) return 0;
-
-    while (!isEmpty(pilha)) {
-        int pos = pop(pilha);
+    while (!IsStackEmpty(pilha)) {
+        int pos = Pop(pilha);
         int x = pos / TAM;
         int y = pos % TAM;
         WaitTime(0.25);
@@ -114,7 +102,7 @@ int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int vi
             int ny = y + dy[i];
             if (nx >= 0 && nx < TAM && ny >= 0 && ny < TAM && labirinto[nx][ny] == 0 && !visitadoDFS[nx][ny]) {
                 i = -1;
-                push(pilha, nx * TAM + ny);
+                Push(pilha, nx * TAM + ny);
                 visitadoDFS[nx][ny] = 1;
                 
             }
@@ -125,25 +113,20 @@ int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int vi
 
 int BFS(int x, int y, int labirinto[5][5], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila){
 
-    static bool iniciado = false;
-    if(!iniciado){
-        if(labirinto[x][y] == 1){
-            return 0;
-        }
-        int pos = (x*TAM) + y;
-        Push(fila, pos);
-        visitadoBFS[x][y] = 1;
-        iniciado = true;
-    }    
-
+    if(labirinto[x][y] == 1) return 0;
+    
+    int pos = (x*TAM) + y;
+    Enqueue(fila, pos);
+    visitadoBFS[x][y] = 1;
+    
     
     int dx[] = {-1, 1, 0, 0};
     int dy[] = {0, 0, -1, 1};
 
 
-    while(!Empty(fila)){
+    while(!IsQueueEmpty(fila)){
         
-        int pos = Pop(fila);
+        int pos = Dequeue(fila);
         Posicao atual;
 
         atual.x = pos / TAM;
@@ -170,7 +153,7 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoDFS[TAM][TAM], int visita
             int pos_fake;
             if(nx >= 0 && ny >= 0 && nx < TAM && ny < TAM && labirinto[nx][ny] == 0 && !visitadoBFS[nx][ny]){
                 pos_fake = (nx * TAM) + ny;
-                Push(fila, pos_fake);
+                Enqueue(fila, pos_fake);
                 visitadoBFS[nx][ny] = 1;
             }
               
