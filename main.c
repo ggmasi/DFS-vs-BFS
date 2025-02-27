@@ -4,8 +4,8 @@
 #include "pilha.h"
 #include "fila.h"
 
-#define TAM 5   // tamanho escolhido para o labirinto (5x5)
-#define CELL_SIZE 60 // tamanho de cada "pixel" desenhado
+// #define TAM 10   // tamanho escolhido para o labirinto (5x5)
+// #define CELL_SIZE 30 // tamanho de cada "pixel" desenhado
 #define VELOCIDADE 3 //Quadros por pixel
 
 typedef struct Posicao{
@@ -14,27 +14,42 @@ typedef struct Posicao{
 
 }Posicao;
 
-void DesenharLabirinto(int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], Posicao atual, int destino[2], int desenhaDFS, int desenhaBFS);
-int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Stack *pilha);
-int BFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila);
+void DesenharLabirinto( int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], Posicao atual, int destino[2], int desenhaDFS, int desenhaBFS, int CELL_SIZE);
+void DesenharLabirintoFinal(int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], int CELL_SIZE);
+int DFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Stack *pilha, int CELL_SIZE);
+int BFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila, int CELL_SIZE);
 // funcoes de resolução (DFS E BFS) e a função de desenhar o labirinto
 
 
 int main(){
    
+    int TAM, inicioX, inicioY, destino[2]; 
+    printf("Insira o tamanho do seu labirinto quadrado: \n");
+    scanf("%d", &TAM); // inicialização das variáveis
+    int labirinto[TAM][TAM]; // matriz que define o labirinto
+    int visitadoDFS[TAM][TAM];  // matriz das coordenadas visitas pelo dfs
+    int visitadoBFS[TAM][TAM];  // matriz das coordenadas visitas pelo bfs
+    printf("Insira o labirinto desejado para realizar as buscas (0 para possíveis caminhos, 1 para paredes): \n");
+    for (int i = 0; i < TAM; i++){
+        for (int j = 0; j < TAM; j++)
+        {
+            scanf("%d", &labirinto[i][j]);
+            visitadoBFS[i][j] = 0;
+            visitadoDFS[i][j] = 0;
+        }
+    }
+    printf("Insira o local (comprimento e altura) desejado para se iniciar as buscas (0 a %d): \n", TAM-1);
+    scanf("%d %d", &inicioX, &inicioY);
+    printf("Insira o local (comprimento e altura) desejado para se terminar as buscas (0 a %d): \n", TAM-1);
+    scanf("%d %d", &destino[0], &destino[1]);
+    int CELL_SIZE = 300/TAM; // o tamanho de cada "pixel" é equivalente a 300 dividido pelo comprimento/largura do labirinto
     
-    int labirinto[TAM][TAM] =  // labirinto descrito em matriz, sendo 1 = parede.
-    {{0, 1, 0, 0, 0},
-     {0, 1, 0, 0, 0}, 
-     {0, 0, 0, 1, 0},
-     {1, 1, 1, 1 ,0},
-     {0, 0, 0, 0, 0}};
     
-    int visitadoDFS[TAM][TAM] = { 0 };  // matriz das coordenadas visitas pelo dfs
+
     
-    int visitadoBFS[TAM][TAM] = { 0 };  // matriz das coordenadas visitas pelo dfs
     
-    int destino[2] = {TAM-1, TAM-1}; // destino eh o canto inferior direito do labirinto
+
+    
     
     Stack *pilha = InitializeStack(TAM*TAM);   // inicializa a pilha com tamanho 25
     
@@ -52,19 +67,22 @@ int main(){
     // largura: ((TAM+6)*CELL_SIZE)*2 — a largura da janela (ajusta para mostrar os dois algoritmos lado a lado)
     // "DFS vs BFS": Título da janela
 
-    SetTargetFPS(15);   // define a quantos frames per second vai rodar a animação
+    SetTargetFPS(60);   // define a quantos frames per second vai rodar a animação
     
   
     int resultadoDFS = -1; 
     while (!WindowShouldClose()){ // mantem a janela rodando enquanto o usuario nao quer fechar.
-            if(resultadoDFS == -1){ // so sera executado no primeiro loop
-                WaitTime(1);    // espera 1 segundo para executar
-                resultadoDFS = DFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, pilha); // caso return == 0 ,nao ha caminho
-                if(!resultadoDFS)  printf("Caminho nao encontrado"); // caso falhe o caminho dfs, printa que nao achou
-                
-                if(!BFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, fila)) // mesma logica do anterior
-                    printf("Caminho nao encontrado\n");      
-        }   
+        if(resultadoDFS == -1){ // so sera executado no primeiro loop
+            WaitTime(1);    // espera 1 segundo para executar
+            resultadoDFS = DFS(inicioX, inicioY, TAM, labirinto, visitadoDFS, visitadoBFS, destino, pilha, CELL_SIZE); // caso return == 0 ,nao ha caminho
+            if(!resultadoDFS)  printf("Caminho nao encontrado"); // caso falhe o caminho dfs, printa que nao achou
+            
+            if(!BFS(inicioX, inicioY, TAM, labirinto, visitadoDFS, visitadoBFS, destino, fila, CELL_SIZE)) // mesma logica do anterior
+                printf("Caminho nao encontrado\n");      
+        }else{
+            DesenharLabirintoFinal(TAM, labirinto, visitadoDFS, visitadoBFS, destino, CELL_SIZE);
+            
+        }      
     }   
     CloseWindow(); //funcao fecha de fato a janela
 
@@ -73,7 +91,7 @@ int main(){
     DestroyQueue(fila);      //destroi a fila
 }
 
-int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Stack *pilha) {
+int DFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Stack *pilha, int CELL_SIZE) {
 
     if(labirinto[x][y] == 1) // se comecar numa parede, falhou
         return 0;
@@ -84,32 +102,39 @@ int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int vi
 
         
     while (!IsStackEmpty(pilha)) {   // enquanto a pilha nao estiver vazia
-        int pos = Pop(pilha);   // recebe o topo da pilha como posicao a ser analisada 
-        int x = pos / TAM;  // decodifica o x
-        int y = pos % TAM;  // decodifica o y
-        WaitTime(0.25); // espera 0.25 sec para agir
-        DesenharLabirinto(labirinto, visitadoDFS, visitadoBFS, (Posicao){.x = x, .y = y}, destino, 1, 0);   // desenha toda vez que comeca a buscar um novo vertice
+        int pos = Peek(pilha);   // recebe o topo da pilha como posicao a ser analisada 
+        int cx = pos / TAM;  // decodifica o x
+        int cy = pos % TAM;  // decodifica o y
+        WaitTime(0.5); // espera 0.25 sec para agir
+        DesenharLabirinto(TAM, labirinto, visitadoDFS, visitadoBFS, (Posicao){.x = cx, .y = cy}, destino, 1, 0, CELL_SIZE);   // desenha toda vez que comeca a buscar um novo vertice
 
-        if (x == destino[0] && y == destino[1])
-            return 1;  // destino encontrado
+        if (cx == destino[0] && cy == destino[1]) return 1;  // destino encontrado
 
-        int dx[] = {-1, 0, 1, 0}; // anda para direita, anda para baixo, anda para esquerda, anda para cima 
-        int dy[] = {0, -1, 0, 1}; // vetores sao lidos de tras para frente pois a prioridade é achar algo no canto inferior direito 
+        int vizinhoEncontrado = 0; // variavel utilizada para definir se há vizinho disponivel
+        int dx[] = {0, 1, 0, -1}; // anda para direita, anda para baixo, anda para esquerda, anda para cima 
+        int dy[] = {1, 0, -1, 0}; 
 
-        for (int i = 3; i >= 0; i--) { // inicia as 4 movimentacoes
-            int nx = x + dx[i]; // x observado recebe seu x mais seu movimento
-            int ny = y + dy[i]; // y observado recebe seu y mais seu movimento 
+        for (int i = 0; i < 4; i++) { // inicia as 4 movimentacoes
+            int nx = cx + dx[i]; // x observado recebe seu x mais seu movimento
+            int ny = cy + dy[i]; // y observado recebe seu y mais seu movimento 
             if (nx >= 0 && nx < TAM && ny >= 0 && ny < TAM && labirinto[nx][ny] == 0 && !visitadoDFS[nx][ny]) { // primeiro verifica se nao esta olhando para fora do labirinto, apos isso, verifica se a posicao olhada eh uma area disponivel, por fim, verifica se a posicao ja nao foi visitada
-                i = -1; // se achar alguma area disponivel, para de olhar e ja empilha essa nova area a ser olhada de proxima 
                 Push(pilha, nx * TAM + ny); // empilha a recem descoberta posicao
                 visitadoDFS[nx][ny] = 1;    // marca a posicao descoberta como visitada   
+                vizinhoEncontrado = 1; //altera a variavel pois há vizinho disponivel
+                break;
             }
         }
+
+        //caso nao haja vizinho disponivel, retorna para o "pixel" anterior
+        if(!vizinhoEncontrado){
+            Pop(pilha);
+        }
+
     }
     return 0;  // caso saia do while sem achar, nao a caminho.
 }
 
-int BFS(int x, int y, int labirinto[5][5], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila){
+int BFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila, int CELL_SIZE){
 
     if(labirinto[x][y] == 1){ // se comecar numa parede, falhou
         return 0;
@@ -131,8 +156,8 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoDFS[TAM][TAM], int visita
         atual.x = pos / TAM;  // decodifica o x 
         atual.y = pos % TAM;  // decodifica o y
 
-        WaitTime(0.25); // espera 0.25 sec
-        DesenharLabirinto(labirinto, visitadoDFS, visitadoBFS, atual, destino, 0, 1); // desenha o labirinto atual
+        WaitTime(0.5); // espera 0.25 sec
+        DesenharLabirinto(TAM, labirinto, visitadoDFS, visitadoBFS, atual, destino, 0, 1, CELL_SIZE); // desenha o labirinto atual
 
         if (atual.x == destino[0] && atual.y == destino[1])
             return 1;  // destino encontrado
@@ -156,7 +181,7 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoDFS[TAM][TAM], int visita
 
 
 
-void DesenharLabirinto(int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], Posicao atual, int destino[2], int desenhaDFS, int desenhaBFS){
+void DesenharLabirinto(int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], Posicao atual, int destino[2], int desenhaDFS, int desenhaBFS, int CELL_SIZE){
     // inicia o processo de desenho na tela
     BeginDrawing();
     
@@ -165,22 +190,24 @@ void DesenharLabirinto(int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int v
     
     // desenha um quadrado vermelho no destino (para o painel DFS)
     // a posição é ajustada somando 3 às coordenadas de destino e multiplicando pelo tamanho da célula
-    DrawRectangle((destino[0]+3)*CELL_SIZE, (destino[1]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
+    DrawRectangle((destino[1]+3)*CELL_SIZE, (destino[0]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
     
     // desenha um quadrado vermelho no destino (para o painel BFS)
     // aqui a posição horizontal é deslocada em (destino+9+TAM) células para separar os dois painéis
-    DrawRectangle((destino[0]+9+TAM)*CELL_SIZE, (destino[1]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
+    DrawRectangle((destino[1]+9+TAM)*CELL_SIZE, (destino[0]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
 
     // loop para desenhar as células do labirinto e suas bordas extras
     // o loop vai de -1 até TAM (inclusive) para criar uma "moldura" em volta do labirinto
     for (int i = -1; i < TAM+1; i++){
         for (int j = -1; j < TAM+1; j++){
             // se a célula é uma parede (valor 1 na matriz do labirinto)
-            if(labirinto[i][j] == 1){
-                // desenha a parede no painel DFS com cor cinza (GRAY)
-                DrawRectangle((j+3) * CELL_SIZE, (i+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, GRAY);
-                // desenha a parede no painel BFS; nota o deslocamento horizontal para separar os painéis
-                DrawRectangle((j+TAM+9) * CELL_SIZE, (i+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, GRAY);
+            if(i >= 0 && i < TAM && j >=0 && j < TAM){
+                if(labirinto[i][j] == 1){
+                    // desenha a parede no painel DFS com cor cinza (GRAY)
+                    DrawRectangle((j+3) * CELL_SIZE, (i+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, GRAY);
+                    // desenha a parede no painel BFS; nota o deslocamento horizontal para separar os painéis
+                    DrawRectangle((j+TAM+9) * CELL_SIZE, (i+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, GRAY);
+                }
             }
             // se a célula faz parte da moldura externa (bordas do labirinto)
             if( i == -1 || i == TAM || j == -1|| j == TAM){
@@ -201,6 +228,8 @@ void DesenharLabirinto(int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int v
         DrawLine(i * CELL_SIZE, 0, i*CELL_SIZE, ((TAM+6)*CELL_SIZE)*2, BLACK);
     }
 
+    int xBFS;
+    int y;
     // desenha as células internas do labirinto para cada painel (DFS e BFS)
     for (int i = 0; i < TAM; i++){
         for (int j = 0; j < TAM; j++){
@@ -236,8 +265,8 @@ void DesenharLabirinto(int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int v
                         DrawRectangle(xBFS, y, CELL_SIZE, CELL_SIZE, GREEN);
                         DrawRectangleLines(xBFS, y, CELL_SIZE, CELL_SIZE, BLACK);
                     }else{
-                        // caso contrário, pinta a célula de roxo escuro (DARKPURPLE)
-                        DrawRectangle(xBFS, y, CELL_SIZE, CELL_SIZE, DARKPURPLE);
+                        // caso contrário, pinta a célula de roxo escuro (BLUE)
+                        DrawRectangle(xBFS, y, CELL_SIZE, CELL_SIZE, BLUE);
                         DrawRectangleLines(xBFS, y, CELL_SIZE, CELL_SIZE, BLACK);
                     }
                 }
@@ -258,7 +287,7 @@ void DesenharLabirinto(int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int v
                 // para o painel BFS:
                 // se a célula foi visitada, pinta de roxo escuro
                 if(visitadoBFS[i][j] == 1){
-                    DrawRectangle(xBFS, y, CELL_SIZE, CELL_SIZE, DARKPURPLE);
+                    DrawRectangle(xBFS, y, CELL_SIZE, CELL_SIZE, BLUE);
                     DrawRectangleLines(xBFS, y, CELL_SIZE, CELL_SIZE, BLACK);
                 }else{
                     // se não foi visitada, pinta de branco; nota o pequeno ajuste no deslocamento horizontal (pode ser para manter alinhamento)
@@ -270,9 +299,78 @@ void DesenharLabirinto(int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int v
     }
     
     // redesenha os quadrados de destino para garantir que fiquem visíveis por cima de outros elementos
-    DrawRectangle((destino[0]+3)*CELL_SIZE, (destino[1]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
-    DrawRectangle((destino[0]+9+TAM)*CELL_SIZE, (destino[1]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
-
+    DrawRectangle((destino[1]+3)*CELL_SIZE, (destino[0]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
+    DrawRectangle((destino[1]+9+TAM)*CELL_SIZE, (destino[0]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
     // finaliza o processo de desenho, atualizando a tela
+    EndDrawing();
+}
+
+
+
+void DesenharLabirintoFinal(int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], int CELL_SIZE){
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    
+    // Desenha os quadrados de destino para ambos os painéis
+    DrawRectangle((destino[1]+3)*CELL_SIZE, (destino[0]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
+    DrawRectangle((destino[1]+9+TAM)*CELL_SIZE, (destino[0]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
+    
+    // Desenha paredes e bordas (moldura) sem acessar índices inválidos
+    for (int i = -1; i < TAM+1; i++){
+        for (int j = -1; j < TAM+1; j++){
+            if(i >= 0 && i < TAM && j >= 0 && j < TAM){
+                if(labirinto[i][j] == 1){
+                    // Painel DFS
+                    DrawRectangle((j+3) * CELL_SIZE, (i+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, GRAY);
+                    // Painel BFS
+                    DrawRectangle((j+TAM+9) * CELL_SIZE, (i+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, GRAY);
+                }
+            }
+            // Desenha as bordas da moldura
+            if(i == -1 || i == TAM || j == -1 || j == TAM){
+                DrawRectangle((j+3) * CELL_SIZE, (i+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, BLACK);
+                DrawRectangle((j+TAM+9) * CELL_SIZE, (i+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, BLACK);
+            }
+        }
+    }
+    
+    // Desenha a grade sobre ambos os painéis
+    for (int i = 0; i <= (TAM+6)*2; i++){
+        DrawLine(0, i*CELL_SIZE, ((TAM+6)*CELL_SIZE)*2, i*CELL_SIZE, BLACK);
+        DrawLine(i * CELL_SIZE, 0, i*CELL_SIZE, ((TAM+6)*CELL_SIZE)*2, BLACK);
+    }
+    
+    // Desenha as células internas para cada painel
+    for (int i = 0; i < TAM; i++){
+        for (int j = 0; j < TAM; j++){
+            int xDFS = (3+j)*CELL_SIZE;       // Posição X para o painel DFS
+            int y = (3+i)*CELL_SIZE;           // Posição Y comum
+            int xBFS = (9+TAM+j)*CELL_SIZE;      // Posição X para o painel BFS
+            
+            // Painel DFS: se visitado, pinta de magenta; senão, branco
+            if(visitadoDFS[i][j] == 1)
+                DrawRectangle(xDFS, y, CELL_SIZE, CELL_SIZE, MAGENTA);
+            else
+                DrawRectangle(xDFS, y, CELL_SIZE, CELL_SIZE, BLANK);
+            DrawRectangleLines(xDFS, y, CELL_SIZE, CELL_SIZE, BLACK);
+            
+            // Painel BFS: se visitado, pinta de roxo escuro; senão, branco
+            if(visitadoBFS[i][j] == 1)
+                DrawRectangle(xBFS, y, CELL_SIZE, CELL_SIZE, BLUE);
+            else
+                DrawRectangle(xBFS, y, CELL_SIZE, CELL_SIZE, BLANK);
+            DrawRectangleLines(xBFS, y, CELL_SIZE, CELL_SIZE, BLACK);
+        }
+    }
+    
+    // redesenha os quadrados de destino para garantir que fiquem visíveis por cima de outros elementos
+    DrawRectangle((destino[1]+3)*CELL_SIZE, (destino[0]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
+    DrawRectangle((destino[1]+9+TAM)*CELL_SIZE, (destino[0]+3)*CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
+
+    for (int i = 0; i <= (TAM+6)*2; i++){
+        DrawLine(0, i*CELL_SIZE, ((TAM+6)*CELL_SIZE)*2, i*CELL_SIZE, BLACK);
+        DrawLine(i * CELL_SIZE, 0, i*CELL_SIZE, ((TAM+6)*CELL_SIZE)*2, BLACK);
+    }
+
     EndDrawing();
 }
