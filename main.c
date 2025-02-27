@@ -23,7 +23,6 @@ int BFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int vi
 int main(){
    
     
-    
     int labirinto[TAM][TAM] =  // labirinto descrito em matriz, sendo 1 = parede.
     {{0, 1, 0, 0, 0},
      {0, 1, 0, 0, 0}, 
@@ -37,10 +36,9 @@ int main(){
     
     int destino[2] = {TAM-1, TAM-1}; // destino eh o canto inferior direito do labirinto
     
-    Stack pilha;
-    initialize(&pilha, TAM*TAM);    // inicializa a pilha com tamanho 25
+    Stack *pilha = InitializeStack(TAM*TAM);   // inicializa a pilha com tamanho 25
     
-    Fila *fila = CriarFila(TAM*TAM);    // inicializa a fila com tamanho 25
+    Fila *fila = InitializeQueue(TAM*TAM);    // inicializa a fila com tamanho 25
     
     Posicao atual = {0};    // posicao inicial eh a (0,0)
 
@@ -60,33 +58,33 @@ int main(){
     int resultadoDFS = -1; 
     while (!WindowShouldClose()){ // mantem a janela rodando enquanto o usuario nao quer fechar.
             if(resultadoDFS == -1){ // so sera executado no primeiro loop
-            WaitTime(1);    // espera 1 segundo para executar
-            resultadoDFS = DFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, &pilha); // caso return == 0 ,nao ha caminho
-            if(!resultadoDFS)  printf("Caminho nao encontrado"); // caso falhe o caminho dfs, printa que nao achou
-            
-            if(!BFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, fila)) // mesma logica do anterior
-                printf("Caminho nao encontrado\n");      
+                WaitTime(1);    // espera 1 segundo para executar
+                resultadoDFS = DFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, pilha); // caso return == 0 ,nao ha caminho
+                if(!resultadoDFS)  printf("Caminho nao encontrado"); // caso falhe o caminho dfs, printa que nao achou
+                
+                if(!BFS(0, 0, labirinto, visitadoDFS, visitadoBFS, destino, fila)) // mesma logica do anterior
+                    printf("Caminho nao encontrado\n");      
         }   
     }   
     CloseWindow(); //funcao fecha de fato a janela
 
     
-    destroy(&pilha);    // destroi a pilha
-    Destroy(fila);      //destroi a fila
+    DestroyStack(pilha);    // destroi a pilha
+    DestroyQueue(fila);      //destroi a fila
 }
 
 int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Stack *pilha) {
 
-        if(labirinto[x][y] == 1) // se comecar numa parede, falhou
-            return 0;
-        
-        int pos = (x*TAM) + y;  // posicao eh codifificada
-        push(pilha, pos);   // empilha a posicao
-        visitadoDFS[x][y] = 1;  //  primeiro vertice eh visitado
+    if(labirinto[x][y] == 1) // se comecar numa parede, falhou
+        return 0;
+    
+    int pos = (x*TAM) + y;  // posicao eh codifificada
+    Push(pilha, pos);   // empilha a posicao
+    visitadoDFS[x][y] = 1;  //  primeiro vertice eh visitado
 
         
-    while (!isEmpty(pilha)) {   // enquanto a pilha nao estiver vazia
-        int pos = pop(pilha);   // recebe o topo da pilha como posicao a ser analisada 
+    while (!IsStackEmpty(pilha)) {   // enquanto a pilha nao estiver vazia
+        int pos = Pop(pilha);   // recebe o topo da pilha como posicao a ser analisada 
         int x = pos / TAM;  // decodifica o x
         int y = pos % TAM;  // decodifica o y
         WaitTime(0.25); // espera 0.25 sec para agir
@@ -103,7 +101,7 @@ int DFS(int x, int y, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int vi
             int ny = y + dy[i]; // y observado recebe seu y mais seu movimento 
             if (nx >= 0 && nx < TAM && ny >= 0 && ny < TAM && labirinto[nx][ny] == 0 && !visitadoDFS[nx][ny]) { // primeiro verifica se nao esta olhando para fora do labirinto, apos isso, verifica se a posicao olhada eh uma area disponivel, por fim, verifica se a posicao ja nao foi visitada
                 i = -1; // se achar alguma area disponivel, para de olhar e ja empilha essa nova area a ser olhada de proxima 
-                push(pilha, nx * TAM + ny); // empilha a recem descoberta posicao
+                Push(pilha, nx * TAM + ny); // empilha a recem descoberta posicao
                 visitadoDFS[nx][ny] = 1;    // marca a posicao descoberta como visitada   
             }
         }
@@ -117,7 +115,7 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoDFS[TAM][TAM], int visita
         return 0;
     }
     int pos = (x*TAM) + y; // posicao eh codifificada
-    Push(fila, pos);     // enfileira a posicao
+    Enqueue(fila, pos);     // enfileira a posicao
     visitadoBFS[x][y] = 1;   //  primeiro vertice eh visitado
        
     
@@ -125,9 +123,9 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoDFS[TAM][TAM], int visita
     int dy[] = {0, 0, -1, 1}; 
 
 
-    while(!Empty(fila)){ // enquanto a fila nao esta vazia
+    while(!IsQueueEmpty(fila)){ // enquanto a fila nao esta vazia
         
-        int pos = Pop(fila);    // desenfileira a primeira posicao da fila
+        int pos = Dequeue(fila);    // desenfileira a primeira posicao da fila
         Posicao atual;  // declara a struct posicao
 
         atual.x = pos / TAM;  // decodifica o x 
@@ -136,6 +134,10 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoDFS[TAM][TAM], int visita
         WaitTime(0.25); // espera 0.25 sec
         DesenharLabirinto(labirinto, visitadoDFS, visitadoBFS, atual, destino, 0, 1); // desenha o labirinto atual
 
+        if (atual.x == destino[0] && atual.y == destino[1])
+            return 1;  // destino encontrado
+
+
         for(int i = 0; i < 4; i++){ // observa as 4 posicoes 
             int nx = atual.x + dx[i]; // olha para cima, baixo, esquerda, e direita
             int ny = atual.y + dy[i];   
@@ -143,7 +145,7 @@ int BFS(int x, int y, int labirinto[5][5], int visitadoDFS[TAM][TAM], int visita
             int pos_fake;   // posicao observada 
             if(nx >= 0 && ny >= 0 && nx < TAM && ny < TAM && labirinto[nx][ny] == 0 && !visitadoBFS[nx][ny]){ // caso a posicao observada preencha os requisitos, ela eh uma pos valida
                 pos_fake = (nx * TAM) + ny; // codifica o x e o y para a pos observaa
-                Push(fila, pos_fake);   // empilha a pos observada
+                Enqueue(fila, pos_fake);   // empilha a pos observada
                 visitadoBFS[nx][ny] = 1; // marca o vertice x y como visita
             }
         }
