@@ -16,7 +16,7 @@ typedef struct Posicao{
 void DesenharLabirinto( int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], Posicao atual, int destino[2], int desenhaDFS, int desenhaBFS, int CELL_SIZE);
 void DesenharLabirintoFinal(int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], int CELL_SIZE);
 int DFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Stack *pilha, int CELL_SIZE);
-int BFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Queue *fila, int CELL_SIZE);
+int BFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila, int CELL_SIZE);
 // funcoes de resolução (DFS E BFS) e a função de desenhar o labirinto
 
 
@@ -52,7 +52,7 @@ int main(){
     
     Stack *pilha = InitializeStack(TAM*TAM);   // inicializa a pilha com tamanho 25
     
-    Queue *fila = InitializeQueue(TAM*TAM);    // inicializa a fila com tamanho 25
+    Fila *fila = InitializeQueue(TAM*TAM);    // inicializa a fila com tamanho 25
     
     Posicao atual = {0};    // posicao inicial eh a (0,0)
 
@@ -133,7 +133,7 @@ int DFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM
     return 0;  // caso saia do while sem achar, nao a caminho.
 }
 
-int BFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Queue *fila, int CELL_SIZE){
+int BFS(int x, int y, int TAM, int labirinto[TAM][TAM], int visitadoDFS[TAM][TAM], int visitadoBFS[TAM][TAM], int destino[2], Fila *fila, int CELL_SIZE){
 
     if(labirinto[x][y] == 1){ // se comecar numa parede, falhou
         return 0;

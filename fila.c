@@ -1,61 +1,61 @@
 #include <stdlib.h>
 #include "fila.h"
 
-Queue *InitializeQueue(int capacidade){
+Fila *InitializeQueue(int capacidade){
 
-    Queue *queue = (Queue*)malloc(sizeof(Queue));
-    queue->array = (int*)malloc(capacidade*sizeof(int));
+    Fila *fila = (Fila*)malloc(sizeof(Fila));
+    fila->array = (int*)malloc(capacidade*sizeof(int));
 
-    queue->inicio = 0;
-    queue->fim = 0;
-    queue->tamanho = 0;
-    queue->capacidade = capacidade;
+    fila->inicio = 0;
+    fila->fim = 0;
+    fila->tamanho = 0;
+    fila->capacidade = capacidade;
 
-    return queue;
+    return fila;
 }
 
-int Enqueue(Queue *queue, int numero){
+int Enqueue(Fila *fila, int numero){
 
-    if(IsQueueFull(queue))
+    if(IsQueueFull(fila))
         return 0;
     
-    if(!(IsQueueEmpty(queue))){
-        if(queue->fim == queue->capacidade - 1)
-            queue->fim = 0;
+    if(!(IsQueueEmpty(fila))){
+        if(fila->fim == fila->capacidade - 1)
+            fila->fim = 0;
         else 
-            queue->fim++;
+            fila->fim++;
     }
 
-    queue->array[queue->fim] = numero;
-    queue->tamanho++;
+    fila->array[fila->fim] = numero;
+    fila->tamanho++;
     return 1;
 }
 
-int Dequeue(Queue *queue){
+int Dequeue(Fila *fila){
 
-    if(IsQueueEmpty(queue))
+    if(IsQueueEmpty(fila))
         return '\0';
     
-    int numero = queue->array[queue->inicio];
-    queue->tamanho--;
-    if(queue->inicio != queue->fim){
-        if(queue->inicio == queue->capacidade - 1)
-            queue->inicio = 0;
+    int numero = fila->array[fila->inicio];
+    fila->tamanho--;
+    if(fila->inicio != fila->fim){
+        if(fila->inicio == fila->capacidade - 1)
+            fila->inicio = 0;
         else 
-            queue->inicio++;
+            fila->inicio++;
     }
     return numero;
 }
 
-int IsQueueEmpty(Queue *queue){
-    return queue->tamanho == 0;
+int IsQueueEmpty(Fila *fila){
+    return fila->tamanho == 0;
 }
 
-int IsQueueFull(Queue *queue){
-    return queue->tamanho == queue->capacidade;
+int IsQueueFull(Fila *fila){
+    return fila->tamanho == fila->capacidade;
 }
 
-void DestroyQueue(Queue *queue){
-    free (queue->array);
-    free (queue);
+void DestroyQueue(Fila *fila){
+    free (fila->array);
+    free (fila);
 }

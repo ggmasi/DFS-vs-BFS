@@ -8,13 +8,13 @@ typedef struct {
     int tamanho;
     int capacidade;
 
-} Queue;
+} Fila;
 
-Queue *InitializeQueue(int capacidade);
-int Enqueue(Queue *queue, int numero);
-int Dequeue(Queue *queue);
-int IsQueueEmpty(Queue *queue);
-int IsQueueFull(Queue *queue);
-void DestroyQueue(Queue *queue);
+Fila *InitializeQueue(int capacidade);
+int Enqueue(Fila *fila, int numero);
+int Dequeue(Fila *fila);
+int IsQueueEmpty(Fila *fila);
+int IsQueueFull(Fila *fila);
+void DestroyQueue(Fila *fila);
 
 #endif
